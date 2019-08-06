@@ -12,7 +12,7 @@
 </style>
 
 <script>
-/* global mapboxgl */
+/* global mapboxgl, mapboxSdk */
 export default {
   data: function() {
     return {
@@ -68,6 +68,21 @@ export default {
     //     .setPopup(popup)
     //     .addTo(map);
     // }
+
+    var mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
+    mapboxClient.geocoding
+      .forwardGeocode({
+        query: "Merchandise Mart, Chicago",
+        autocomplete: false,
+        limit: 1
+      })
+      .send()
+      .then(function(response) {
+        if (response && response.body && response.body.features && response.body.features.length) {
+          var feature = response.body.features[0];
+          new mapboxgl.Marker().setLngLat(feature.center).addTo(map);
+        }
+      });
   },
   methods: {}
 };
